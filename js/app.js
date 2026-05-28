@@ -34,10 +34,12 @@ function renderizar() {
     const cerrados = cortes.filter(c => c.fin !== null);
     const zonaHistorial = document.getElementById("listaCortes");
     const htmlCerrados = cerrados.map(c => {
-        return `<div>Inicio: ${formatearFecha(c.inicio)} | Fin: ${formatearFecha(c.fin)} | Duración: ${formatearDuracion(c.calcularDuracion())}</div>`;
+        return `<div>Inicio: ${formatearFecha(c.inicio)} | Fin: ${formatearFecha(c.fin)} | Duración: ${formatearDuracion(c.calcularDuracion())} 
+        <button data-id="${c.id}">Eliminar</button></div>`;
     }).join("");
     zonaHistorial.innerHTML = htmlCerrados;
 }
+
 boton.addEventListener("click", function () {
     const activo = obtenerCorteActivo();
 
@@ -61,21 +63,34 @@ boton.addEventListener("click", function () {
     renderizar();
 });
 
+const zonaHistorial = document.getElementById("listaCortes");
 
+zonaHistorial.addEventListener("click", function(event) {
+    if (event.target.tagName === "BUTTON") {
+        const idCorte = Number(event.target.dataset.id);
+        eliminarCorte(idCorte);
+    }
+});
+
+
+// UTILIDAD
 function obtenerCorteActivo() {
     return cortes.find(c => c.fin === null);
 }
 
 function formatearDuracion(ms) {
-
     const minutosTotales = Math.floor(ms / 1000 / 60);
-
     const horas = Math.floor(minutosTotales / 60);
-
     const minutos = minutosTotales % 60;
-
     return `${horas}h ${minutos}min`;
 }
+
 function formatearFecha(timestamp) {
     return new Date(timestamp).toLocaleString("es-CL");
+}
+
+function eliminarCorte(id) {
+    cortes = cortes.filter(c => c.id !== id);
+    guardarCortes(cortes)
+    renderizar();
 }
