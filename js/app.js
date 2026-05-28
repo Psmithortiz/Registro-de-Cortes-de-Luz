@@ -1,5 +1,5 @@
 import {Corte} from "./corte.js";
-import {guardarCortes, cargarCortes} from "./persistencia.js";
+import {guardarCortes, cargarCortes, guardarConfig, cargarConfig} from "./persistencia.js";
 
 
 let cortes = cargarCortes();
@@ -8,14 +8,17 @@ let cortes = cargarCortes();
 window.Corte = Corte;
 window.guardarCortes = guardarCortes;
 window.cargarCortes = cargarCortes;
-
+window.guardarConfig = guardarConfig;
+window.cargarConfig = cargarConfig;
 
 console.log("app.js cargado. Cortes en memoria:", cortes);
 
 
 const boton = document.getElementById("btnRegistrar");
 
+
 renderizar();
+cargarConfigEnFormulario()
 
 function renderizar() {
     // PARTE 1: zona corte en curso
@@ -63,6 +66,28 @@ boton.addEventListener("click", function () {
     renderizar();
 });
 
+const btnGuardarConfig = document.getElementById("btnGuardarConfig");
+btnGuardarConfig.addEventListener("click", function() {
+    const titular = document.getElementById("inputTitular").value;
+    const direccion = document.getElementById("inputDireccion").value;
+    const distribuidora = document.getElementById("inputDistribuidora").value;
+    const numeroCliente = document.getElementById("inputNumeroCliente").value;
+    const config = {
+        titular,
+        direccion,
+        distribuidora,
+        numeroCliente
+    };
+
+    // 3. Guardar en LocalStorage usando la función que importaste
+    guardarConfig(config);
+
+    // 4. Feedback instantáneo para el usuario
+    alert("Configuración guardada");
+});
+
+
+
 const zonaHistorial = document.getElementById("listaCortes");
 
 zonaHistorial.addEventListener("click", function(event) {
@@ -74,6 +99,15 @@ zonaHistorial.addEventListener("click", function(event) {
 
 
 // UTILIDAD
+
+function cargarConfigEnFormulario() {
+    const config = cargarConfig();
+    document.getElementById("inputTitular").value = config.titular;
+    document.getElementById("inputDireccion").value = config.direccion;
+    document.getElementById("inputDistribuidora").value = config.distribuidora;
+    document.getElementById("inputNumeroCliente").value = config.numeroCliente;
+}
+
 function obtenerCorteActivo() {
     return cortes.find(c => c.fin === null);
 }
