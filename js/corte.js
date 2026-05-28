@@ -30,6 +30,8 @@ export class Corte {
             return this.fin - this.inicio;
         }
     }
+
+
 }
 
 
