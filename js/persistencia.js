@@ -44,3 +44,4 @@ export function cargarConfig() {
         return { titular: "", direccion: "", distribuidora: "", numeroCliente: "" };
     }
 }
+
