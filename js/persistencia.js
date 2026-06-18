@@ -36,12 +36,12 @@ export function cargarConfig() {
     try {
         const datos = localStorage.getItem("configuracion");
         if (datos === null) {
-            return { titular: "", direccion: "", distribuidora: "", numeroCliente: "" };
+            return { titular: "", rut: "", direccion: "", distribuidora: "", numeroCliente: "" };
         }
         return JSON.parse(datos);
     } catch (error) {
         console.error("Error al cargar la configuración, restaurando valores por defecto:", error);
-        return { titular: "", direccion: "", distribuidora: "", numeroCliente: "" };
+        return { titular: "", rut: "", direccion: "", distribuidora: "", numeroCliente: "" };
     }
 }
 
