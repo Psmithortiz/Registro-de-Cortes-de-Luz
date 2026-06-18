@@ -2,11 +2,17 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Cortes de Luz</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<h1>Registro de Cortes de Luz</h1>
-<div id="formConfig">
+<main>
+    <h1>Registro de Cortes de Luz</h1>
+    <button id="btnToggleConfig">Configurar mis datos</button>
+
+<div id="formConfig" style="display: none; margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
     <label>Titular: <input type="text" id="inputTitular"></label>
     <label>RUT: <input type="text" id="inputRut"></label>
     <label>Dirección: <input type="text" id="inputDireccion"></label>
@@ -22,6 +28,6 @@
 <h2>Historial</h2>
 
 <div id="listaCortes"></div>
+</main>
 <script type="module" src="js/app.js"></script>
 </body>
-</html>

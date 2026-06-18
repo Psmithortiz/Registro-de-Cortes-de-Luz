@@ -51,6 +51,8 @@ btnGuardarConfig.addEventListener("click", function () {
         numeroCliente
     };
     guardarConfig(config);
+    formConfig.style.display = "none";
+    btnToggleConfig.textContent = "Configurar mis datos";
     alert("Configuración guardada");
 });
 
@@ -91,6 +93,20 @@ zonaHistorial.addEventListener("click", function(event) {
 });
 
 
+const btnToggleConfig = document.getElementById("btnToggleConfig");
+const formConfig = document.getElementById("formConfig");
+
+btnToggleConfig.addEventListener("click", function() {
+    if (formConfig.style.display === "none") {
+        formConfig.style.display = "block";
+        btnToggleConfig.textContent = "Cerrar configuración";
+    } else {
+        formConfig.style.display = "none";
+        btnToggleConfig.textContent = "Configurar mis datos";
+    }
+});
+
+
 btnReporte.addEventListener("click", generarReporte);
 
 
@@ -105,6 +121,15 @@ function renderizar() {
         boton.textContent = "Registrar corte";
     }
 
+    const encabezado = `
+    <div class="historial-encabezado">
+        <span>Inicio</span>
+                <span>Fin</span>
+        <span>Duración</span>
+        <span>Acciones</span>
+    </div>
+`;
+
     const cerrados = cortes.filter(c => c.fin !== null);
 
     // Usamos una variable local idéntica para asegurarnos de que la función sea independiente
@@ -113,9 +138,9 @@ function renderizar() {
     const htmlCerrados = cerrados.map(c => {
         if (c.id === idCorteExpandido) {
             return `
-            <div class="corte-item expandido" style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+            <div class="corte-item expandido">
                 <p>Inicio: ${formatearFecha(c.inicio)} | Fin: ${formatearFecha(c.fin)} | Duración: ${formatearDuracion(c.calcularDuracion())}</p>
-                <div>
+                    <div>
                     <label>Notas: <input type="text" data-id="${c.id}" data-campo="notas" value="${c.notas || ''}"></label>
                 </div>
                 <div>
@@ -134,15 +159,19 @@ function renderizar() {
             </div>`;
         } else {
             return `
-            <div class="corte-item" style="margin: 5px 0;">
-                <span>Inicio: ${formatearFecha(c.inicio)} | Duración: ${formatearDuracion(c.calcularDuracion())}</span>
-                <button data-id="${c.id}" data-accion="editar">Editar</button>
-                <button data-id="${c.id}" data-accion="eliminar">Eliminar</button>
-            </div>`;
+<div class="corte-item">
+    <span class="col-fecha">${formatearFecha(c.inicio)}</span>
+    <span class="col-fecha">${formatearFecha(c.fin)}</span>
+    <span class="col-duracion">${formatearDuracion(c.calcularDuracion())}</span>
+    <span class="col-acciones">
+        <button data-id="${c.id}" data-accion="editar">Editar</button>
+        <button data-id="${c.id}" data-accion="eliminar">Eliminar</button>
+    </span>
+</div>`;
         }
     }).join("");
 
-    contenedorHistorial.innerHTML = htmlCerrados;
+    contenedorHistorial.innerHTML = encabezado + htmlCerrados;
 }
 
 function generarReporte() {
@@ -163,6 +192,9 @@ function generarReporte() {
     const totalMs = cerrados.reduce((acum, c) => acum + c.calcularDuracion(), 0);
     const totalFormateado = formatearDuracion(totalMs);
     const cerradosOrdenados = [...cerrados].sort((a, b) => a.inicio - b.inicio);
+    const cortesConImagen = cerradosOrdenados
+        .map((c, i) => ({ numero: i + 1, corte: c }))
+        .filter(item => item.corte.reclamo?.screenshot);
 
     const primerCorte = cerradosOrdenados[0];
     const ultimoCorte = cerradosOrdenados[cerradosOrdenados.length - 1];
@@ -185,6 +217,21 @@ function generarReporte() {
     </tr>
 `).join("");
 
+
+    const seccionImagenes = cortesConImagen.length > 0
+        ? `
+        <div class="evidencia-pagina">
+            <h2 class="evidencia-titulo">Evidencia adjunta</h2>
+            ${cortesConImagen.map(item => `
+                <div class="evidencia">
+                    <p><strong>Imagen ${item.numero}</strong> — Corte del ${formatearFecha(item.corte.inicio)}${item.corte.reclamo.folio ? ` (folio ${item.corte.reclamo.folio})` : ""}</p>
+                    <img src="${item.corte.reclamo.screenshot}" alt="Evidencia corte ${item.numero}">
+                </div>
+            `).join("")}
+        </div>
+    `
+        : "";
+
     // fecha del reporte
     const fechaReporte = new Date().toLocaleDateString("es-CL");
 
@@ -195,23 +242,46 @@ function generarReporte() {
 <head>
     <meta charset="UTF-8">
     <title>Reporte de Cortes - ${config.titular}</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; color: #000; }
-        h1 { font-size: 18pt; margin-bottom: 5px; }
-        h2 { font-size: 14pt; margin-top: 30px; }
-        .meta { margin-bottom: 20px; font-size: 11pt; }
-        .meta div { margin: 3px 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10pt; }
-        th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; vertical-align: top; }
-        th { background: #eee; }
-        .totales { margin-top: 20px; font-size: 11pt; }
-        .totales strong { display: inline-block; min-width: 200px; }
-        .footer { margin-top: 40px; font-size: 9pt; color: #666; }
-        @media print {
-            body { margin: 20px; }
-            button { display: none; }
-        }
-    </style>
+<style>
+    body { font-family: Arial, sans-serif; margin: 40px; color: #000; }
+    h1 { font-size: 18pt; margin-bottom: 5px; }
+    h2 { font-size: 14pt; margin-top: 30px; }
+    .meta { margin-bottom: 20px; font-size: 11pt; }
+    .meta div { margin: 3px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 10pt; }
+    th, td { border: 1px solid #333; padding: 6px 8px; text-align: left; vertical-align: top; }
+    th { background: #eee; }
+    .totales { margin-top: 20px; font-size: 11pt; }
+    .totales strong { display: inline-block; min-width: 200px; }
+    .footer { margin-top: 40px; font-size: 9pt; color: #666; }
+    
+    .evidencia-pagina {
+        page-break-before: always;
+        break-before: page;
+    }
+    .evidencia-titulo {
+        margin-top: 0;
+    }
+    .evidencia {
+        margin-top: 20px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    .evidencia p {
+        margin: 0 0 8px 0;
+        font-size: 11pt;
+    }
+    .evidencia img {
+        max-width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    @media print {
+        body { margin: 20px; }
+        button { display: none; }
+    }
+</style>
 </head>
 <body>
     <h1>Reporte de cortes de suministro eléctrico</h1>
@@ -247,11 +317,13 @@ function generarReporte() {
         <div><strong>Tiempo total sin servicio:</strong> ${totalFormateado}</div>
     </div>
 
-    <div class="footer">
-        Documento generado automáticamente como evidencia de respaldo para
-        reclamo formal ante la SEC (Superintendencia de Electricidad y
-        Combustibles).
-    </div>
+<div class="footer">
+    Documento generado automáticamente como evidencia de respaldo para
+    reclamo formal ante la SEC (Superintendencia de Electricidad y
+    Combustibles).
+</div>
+
+${seccionImagenes}
 
     <button onclick="window.print()" style="margin-top: 30px; padding: 8px 16px;">Imprimir / Guardar como PDF</button>
 </body>
@@ -364,3 +436,4 @@ function comprimirImagen(file, callback) {
     };
     reader.readAsDataURL(file);
 }
+

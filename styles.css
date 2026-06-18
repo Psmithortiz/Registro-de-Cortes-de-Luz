@@ -1,0 +1,249 @@
+/* ====== Reset y base ====== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+    color: #222;
+    line-height: 1.5;
+}
+
+main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 22px;
+    margin: 0 0 20px 0;
+}
+
+h2 {
+    font-size: 18px;
+    margin: 25px 0 10px 0;
+}
+
+/* ====== Botones ====== */
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    min-height: 44px;
+    margin: 4px 4px 4px 0;
+}
+
+button:hover {
+    background: #1e4fcc;
+}
+
+button:active {
+    background: #1a3fa3;
+}
+
+/* botón secundario (Cancelar, Editar, Eliminar) */
+#listaCortes button {
+    background: #e5e7eb;
+    color: #222;
+    padding: 6px 12px;
+    font-size: 13px;
+    min-height: 36px;
+}
+
+#listaCortes button:hover {
+    background: #d1d5db;
+}
+
+#listaCortes button[data-accion="eliminar"] {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+#listaCortes button[data-accion="guardar"] {
+    background: #2563eb;
+    color: white;
+}
+
+/* ====== Formulario config ====== */
+#formConfig {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0 20px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#formConfig label {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 200px;
+    font-size: 13px;
+    color: #555;
+}
+
+#formConfig input {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+    margin-top: 3px;
+}
+
+#formConfig button {
+    flex: 1 1 100%;
+}
+
+/* ====== Estado del corte en curso ====== */
+#corteEnCurso {
+    background: white;
+    border-left: 4px solid #2563eb;
+    padding: 12px 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+#corteEnCurso p {
+    margin: 0;
+}
+
+/* ====== Historial de cortes ====== */
+#listaCortes > div {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px 15px;
+    margin: 8px 0;
+}
+
+#listaCortes > div.expandido,
+#listaCortes > div[style*="border"] {
+    border-color: #2563eb;
+    border-width: 2px;
+}
+
+/* inputs del form expandido */
+#listaCortes input[type="text"] {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+#listaCortes input[type="file"] {
+    margin-top: 5px;
+}
+
+#listaCortes label {
+    display: block;
+    margin: 8px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+#listaCortes img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* ====== Media query: celular ====== */
+@media (max-width: 600px) {
+    main {
+        padding: 12px;
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+
+    #formConfig label {
+        flex: 1 1 100%;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    #listaCortes > div {
+        padding: 10px;
+    }
+}
+/* ====== Historial como tabla visual ====== */
+.historial-encabezado {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1.5fr;
+    gap: 10px;
+    padding: 8px 15px;
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 5px;
+}
+
+#listaCortes > div.corte-item:not(.expandido) {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1.5fr;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.col-acciones {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+/* En celular: stack las columnas (no rompe el layout) */
+@media (max-width: 600px) {
+    .historial-encabezado {
+        display: none;   /* en celular el encabezado ocupa mucho, se entiende sin él */
+    }
+
+    #listaCortes > div.corte-item:not(.expandido) {
+        display: block;
+    }
+
+    .col-acciones {
+        margin-top: 8px;
+        justify-content: flex-start;
+    }
+}
+
+.evidencia-pagina {
+    page-break-before: always;
+    break-before: page;
+}
+.evidencia-titulo {
+    margin-top: 0;
+}
+.evidencia {
+    margin-top: 20px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.evidencia p {
+    margin: 0 0 8px 0;
+    font-size: 11pt;
+}
+.evidencia img {
+    max-width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
